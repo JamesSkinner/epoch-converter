@@ -37,8 +37,10 @@ function getSelectedText() {
 }
 
 function convertTimestamp(ts) {
-	var date = new Date(ts * 1000);
-	var dateStr = "";
+    var date = new Date(ts * 1000);
+    if (ts.length > 10) date = new Date(parseInt(ts));
+
+    var dateStr = "";
     
     var d = date.getDate();
     var m = date.getMonth()+1;
