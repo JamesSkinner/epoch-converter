@@ -6,6 +6,12 @@ $(document).ready(function() {
     });
     
 	$(document).dblclick(function(e) {
+		hideBubble();
+		processSelection(e);
+	});
+
+	$(document).click(function(e) {
+		hideBubble();
 		processSelection(e);
 	});
 	
@@ -20,6 +26,8 @@ function processSelection(e) {
 
     if ($.isNumeric(text)) {
 		var humanReadableDate = convertTimestamp(text);
+
+		if (humanReadableDate != "")
         showBubble(e, humanReadableDate);        
 	}
 }
@@ -51,6 +59,9 @@ function convertTimestamp(ts) {
     var mi = date.getMinutes();
     var s = date.getSeconds(); 
     dateStr += (h<=9?'0'+h:h) + ":" + (mi<=9?'0'+mi:mi) + ":" + (s<=9?'0'+s:s);
+
+	if (dateStr.indexOf("NaN") > -1)
+		return "";
     
 	return dateStr;
 }
