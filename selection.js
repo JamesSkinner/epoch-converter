@@ -1,10 +1,6 @@
 $(document).ready(function() {
-    $('body').append("<div id=\"ec-bubble\"><div id=\"ec-bubble-text\"></div><div id=\"ec-bubble-close\"></div></div>");
-    
-    $('#ec-bubble-close').click(function() {
-        hideBubble();
-    });
-    
+    $('body').append("<div id=\"ec-bubble\"><div id=\"ec-bubble-text\"></div></div>");
+
 	$(document).dblclick(function(e) {
 		hideBubble();
 		processSelection(e);
@@ -14,33 +10,34 @@ $(document).ready(function() {
 		hideBubble();
 		processSelection(e);
 	});
-	
+
 	$(document).bind('mouseup', function(e) {
 		processSelection(e);
 	});
 
 });
 
-function processSelection(e) {	
+function processSelection(e) {
     var text = getSelectedText();
 
     if ($.isNumeric(text)) {
 		var humanReadableDate = convertTimestamp(text);
 
-		if (humanReadableDate != "")
-        showBubble(e, humanReadableDate);        
+		if (humanReadableDate !== "") {
+            showBubble(e, humanReadableDate);
+        }
 	}
 }
 
 function getSelectedText() {
 	var text = "";
-	
+
     if (window.getSelection) {
         text = window.getSelection().toString();
     } else if (document.selection && document.selection.type != "Control") {
         text = document.selection.createRange().text;
     }
-	
+
 	return text;
 }
 
@@ -49,20 +46,20 @@ function convertTimestamp(ts) {
     if (ts.length > 10) date = new Date(parseInt(ts));
 
     var dateStr = "";
-    
+
     var d = date.getDate();
     var m = date.getMonth()+1;
     var y = date.getFullYear();
     dateStr += (m<=9?'0'+m:m) + "/" + (d<=9?'0'+d:d) + "/" + y + " - ";
-  
+
     var h = date.getHours();
     var mi = date.getMinutes();
-    var s = date.getSeconds(); 
+    var s = date.getSeconds();
     dateStr += (h<=9?'0'+h:h) + ":" + (mi<=9?'0'+mi:mi) + ":" + (s<=9?'0'+s:s);
 
 	if (dateStr.indexOf("NaN") > -1)
 		return "";
-    
+
 	return dateStr;
 }
 
@@ -77,5 +74,3 @@ function hideBubble() {
     $('#ec-bubble').css('visibility', 'hidden');
     $('#ec-bubble-text').html("");
 }
-
-
