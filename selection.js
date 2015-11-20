@@ -20,12 +20,13 @@ $(document).ready(function() {
 function processSelection(e) {
     var text = getSelectedText();
 
-    if ($.isNumeric(text)) {
-		var humanReadableDate = convertTimestamp(text);
+    if ($.isNumeric(text) && (text.length == 10 || text.length == 13)) {
+		convertTimestamp(text,function(humanReadableDate){
 
-		if (humanReadableDate !== "") {
-            showBubble(e, humanReadableDate);
-        }
+    		if (humanReadableDate) {
+                showBubble(e, humanReadableDate);
+            }
+        });
 	}
 }
 
@@ -41,26 +42,20 @@ function getSelectedText() {
 	return text;
 }
 
-function convertTimestamp(ts) {
-    var date = new Date(ts * 1000);
-    if (ts.length > 10) date = new Date(parseInt(ts));
+function convertTimestamp(ts, cb) {
+    chrome.storage.sync.get(function(opts){
+        var date;
+        if(ts.length == 10){ // s
+            date = moment.unix(+ts);
+        } else { // ms
+            date = moment(+ts);
+        }
 
-    var dateStr = "";
-
-    var d = date.getDate();
-    var m = date.getMonth()+1;
-    var y = date.getFullYear();
-    dateStr += (m<=9?'0'+m:m) + "/" + (d<=9?'0'+d:d) + "/" + y + " - ";
-
-    var h = date.getHours();
-    var mi = date.getMinutes();
-    var s = date.getSeconds();
-    dateStr += (h<=9?'0'+h:h) + ":" + (mi<=9?'0'+mi:mi) + ":" + (s<=9?'0'+s:s);
-
-	if (dateStr.indexOf("NaN") > -1)
-		return "";
-
-	return dateStr;
+        if(!date.isValid()){
+    		return;
+        }
+    	return cb(date.format(opts.dateFormat));
+    });
 }
 
 function showBubble(e, text) {
